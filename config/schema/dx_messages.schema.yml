@@ -1,0 +1,13 @@
+dx_messages.settings:
+  type: config_object
+  label: 'DX Messages Settings'
+  mapping:
+    dx_api_create_endpoint:
+      type: string
+      label: 'Messages Create Endpoint'
+    dx_api_messages_endpoint:
+      type: string
+      label: 'Message Status Endpoint'
+    dx_api_key:
+      type: string
+      label: 'Message Endpoint Key'
