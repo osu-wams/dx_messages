@@ -1,0 +1,10 @@
+services:
+  dx_messages.dashboard_messages:
+    class: Drupal\dx_messages\DashboardMessages
+    arguments: [ '@http_client', '@config.factory', '@entity_type.manager', '@messenger', '@string_translation' ]
+
+  dx_messages.event_subscriber:
+    class: Drupal\dx_messages\EventSubscriber\DxMessagesWorkflowSubscriber
+    arguments: [ '@entity_type.manager', '@config.factory', '@messenger', '@dx_messages.dashboard_messages', '@string_translation', '@queue' ]
+    tags:
+      - { name: event_subscriber }
