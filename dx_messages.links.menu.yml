@@ -2,5 +2,5 @@ dx_messages.admin_settings:
   title: 'DX Messages Settings'
   description: 'Manage DX Messages API Integrations'
   route_name: dx_messages.settings_form
-  parent: system.admin_config_system
+  parent: system.admin_config_services
   weight: 10

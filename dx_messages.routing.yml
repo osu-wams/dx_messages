@@ -1,5 +1,5 @@
 dx_messages.settings_form:
-  path: '/admin/config/system/dx-messages'
+  path: '/admin/config/services/dx-messages'
   defaults:
     _title: 'DX Messages settings'
     _form: 'Drupal\dx_messages\Form\SettingsForm'
