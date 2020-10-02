@@ -1,0 +1,4 @@
+dx_api_create_endpoint: 'http://example.com/api/v1/messages/action/create'
+dx_api_messages_endpoint: 'http://example.com/api/v1/message/id'
+dx_api_key: 'abc123'
+langcode: 'en'

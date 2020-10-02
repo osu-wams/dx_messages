@@ -1,0 +1,4 @@
+administer dx_messages configuration:
+  title: 'Administer dx_messages configuration'
+  description: 'Optional description.'
+  restrict access: true

@@ -1,0 +1,7 @@
+dx_messages.settings_form:
+  path: '/admin/config/system/dx-messages'
+  defaults:
+    _title: 'DX Messages settings'
+    _form: 'Drupal\dx_messages\Form\SettingsForm'
+  requirements:
+    _permission: 'administer dx_messages configuration'
