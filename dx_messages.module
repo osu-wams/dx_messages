@@ -1,0 +1,68 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for DX Messages module.
+ *
+ * @DCG
+ * This file is no longer required in Drupal 8.
+ * @see https://www.drupal.org/node/2217931
+ */
+
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
+use Drupal\dx_messages\QueuedDXMessages;
+
+/**
+ * Implements hook_form_alter().
+ */
+function dx_messages_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form_id === 'node_messages_form' || $form_id === 'node_messages_edit_form') {
+    $form['field_messages_response_id']['widget'][0]['value']['#attributes']['disabled'] = 'disabled';
+  }
+}
+
+/**
+ * Implements hook_cron().
+ */
+function dx_messages_cron() {
+  $queue = \Drupal::queue('dx_messages');
+  $currentDateTime = new DrupalDateTime('now', 'UTC');
+  $moderation = Drupal::entityTypeManager()
+    ->getStorage('content_moderation_state')
+    ->getQuery()
+    ->condition('workflow', 'message_publication')
+    ->condition('moderation_state', 'published')
+    ->execute();
+  $moderation_ids = Drupal::entityTypeManager()
+    ->getStorage('content_moderation_state')
+    ->loadMultiple($moderation);
+  /** @var \Drupal\content_moderation\Entity\ContentModerationState $moderation_entity */
+  $moderation_node_ids = [];
+  foreach ($moderation_ids as $moderation_entity) {
+    $moderation_node_ids[] = (int) $moderation_entity->content_entity_id->getString();
+  }
+  if (!empty($moderation_node_ids)) {
+    $nodes = Drupal::entityTypeManager()
+      ->getStorage('node')
+      ->getQuery()
+      ->condition('type', 'messages')
+      ->condition('status', 1)
+      ->condition('nid', $moderation_node_ids, 'IN')
+      ->condition('field_message_publish_day', $currentDateTime->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT), '<=')
+      ->execute();
+
+    \Drupal::logger('dx_messages')->info(\Drupal::translation()
+      ->translate('Adding @count items to the queue.', ['@count' => count($nodes)]));
+    foreach ($nodes as $node) {
+      /** @var \Drupal\node\Entity\Node $node_to_check */
+      $node_to_check = Drupal::entityTypeManager()
+        ->getStorage('node')
+        ->load($node);
+      $message_id = $node_to_check->get('field_messages_response_id')
+        ->getString();
+      $queue->createItem(new QueuedDXMessages($message_id, $node_to_check->id()));
+    }
+  }
+}

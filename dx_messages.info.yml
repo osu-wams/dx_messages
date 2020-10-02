@@ -1,0 +1,10 @@
+name: DX Messages
+type: module
+description: DX Messages Integration
+package: DX
+core: 8.x
+core_version_requirement: ^8 || ^9
+configure: dx_messages.settings_form
+dependencies:
+  - drupal:workflows
+  - workbench_email:workbench_email

@@ -1,0 +1,20 @@
+{
+  "name": "osu-wams/dx_messages",
+  "description": "Drupal Module to send messages off to the Dashboard MCM.",
+  "minimum-stability": "stable",
+  "license": "GPL-2.0-or-later",
+  "type": "drupal-custom-module",
+  "keywords": [
+    "Drupal"
+  ],
+  "authors": [
+    {
+      "name": "Matthew Brabham",
+      "email": "matthew.brabham@oregonstate.edu"
+    }
+  ],
+  "require": {
+    "drupal/core": "^8.7 || ^9",
+    "drupal/workbench_email": "^1.7"
+  }
+}
