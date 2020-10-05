@@ -12,14 +12,14 @@ class QueuedDXMessages {
    *
    * @var string
    */
-  private string $messageId;
+  private $messageId;
 
   /**
    * The Entity ID.
    *
    * @var int
    */
-  private int $entityId;
+  private $entityId;
 
   /**
    * QueuedDXMessages constructor.

@@ -26,35 +26,35 @@ class DxMessagesWorkflowSubscriber implements EventSubscriberInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  private EntityTypeManagerInterface $entityTypeManager;
+  private $entityTypeManager;
 
   /**
    * Config Factory Interface.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  private ConfigFactoryInterface $configFactory;
+  private $configFactory;
 
   /**
    * Messenger Interface.
    *
    * @var \Drupal\Core\Messenger\MessengerInterface
    */
-  private MessengerInterface $messenger;
+  private $messenger;
 
   /**
    * DX Dashboard Messages service.
    *
    * @var \Drupal\dx_messages\DashboardMessages
    */
-  private DashboardMessages $dashboardMessages;
+  private $dashboardMessages;
 
   /**
    * Queue Factory.
    *
    * @var \Drupal\Core\Queue\QueueFactory
    */
-  private QueueFactory $queue;
+  private $queue;
 
   /**
    * DxMessagesWorkflowSubscriber constructor.

@@ -25,14 +25,14 @@ class DxMessagesStatusWorker extends QueueWorkerBase implements ContainerFactory
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  private EntityTypeManagerInterface $entityTypeManager;
+  private $entityTypeManager;
 
   /**
    * Messages Interface.
    *
    * @var \Drupal\dx_messages\DashboardMessages
    */
-  private DashboardMessages $dashboardMessages;
+  private $dashboardMessages;
 
   /**
    * Constructs a Queue Worker.
