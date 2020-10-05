@@ -48,14 +48,14 @@ class DashboardMessages {
    *
    * @var \Drupal\Core\Messenger\MessengerInterface
    */
-  private MessengerInterface $messenger;
+  private $messenger;
 
   /**
    * The Translation interface.
    *
    * @var \Drupal\Core\StringTranslation\TranslationInterface
    */
-  private TranslationInterface $string_translation;
+  private $string_translation;
 
   /**
    * Constructs a DashboardMessages object.
