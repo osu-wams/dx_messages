@@ -25,6 +25,7 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'url',
       '#maxlength' => 1024,
       '#title' => $this->t('Messages Create Endpoint'),
+      '#description' => $this->t('Endpoint to Create new messages.'),
       '#default_value' => $this->config('dx_messages.settings')
         ->get('dx_api_create_endpoint'),
     ];
@@ -32,12 +33,14 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'url',
       '#maxlength' => 1024,
       '#title' => $this->t('Message Status Endpoint'),
+      '#description' => $this->t('Endpoint for a given message. The Message ID will be stored with each node.'),
       '#default_value' => $this->config('dx_messages.settings')
         ->get('dx_api_messages_endpoint'),
     ];
     $form['dx_api_key'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Messages Endpoint Key'),
+      '#description' => $this->t('Your API key. This should not be stored here, instead look into secrets management for your hosing provider.'),
       '#default_value' => $this->config('dx_messages.settings')
         ->get('dx_api_key'),
     ];
