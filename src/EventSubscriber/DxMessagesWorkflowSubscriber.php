@@ -3,6 +3,7 @@
 namespace Drupal\dx_messages\EventSubscriber;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Queue\QueueFactory;
@@ -132,7 +133,16 @@ class DxMessagesWorkflowSubscriber implements EventSubscriberInterface {
         if ($messagesResponseId && is_string($messagesResponseId)) {
           $entity->set('field_messages_response_id', $messagesResponseId);
           $entity->save();
-          $this->messenger->addMessage('Your Message has been successfully sent.');
+          $currentDateTime = new DrupalDateTime('now', 'UTC');
+          $messagePublishDateTime = new DrupalDateTime($entity->get('field_message_publish_day')
+            ->getString(), 'UTC');
+          if ($currentDateTime > $messagePublishDateTime) {
+            $this->messenger->addMessage('Your Message has been successfully queued for sending. Please check the message Dashboard for status.');
+          }
+          else {
+            $cleanMessageResponse = $messagePublishDateTime->format('l, F d, Y - h:i:s A', ['timezone' => date_default_timezone_get()]);
+            $this->messenger->addMessage($this->t('Your Message has been successfully queued for sending. Please check the Message Dashboard after @messageDateTime.', ['@messageDateTime' => $cleanMessageResponse]));
+          }
           // Add the item to the queue to be process on next run.
           $this->queue->get('dx_messages')
             ->createItem(new QueuedDXMessages($messagesResponseId, $entity->id()));
@@ -147,11 +157,11 @@ class DxMessagesWorkflowSubscriber implements EventSubscriberInterface {
 
       case 'cancelled':
         $cancelStatus = $this->dashboardMessages->sendCancelMessage($messagePublishId);
-        if ($cancelStatus === 'CANCELED') {
-          $this->messenger->addMessage('Message has been canceled');
+        if ($cancelStatus === 'CANCELLED') {
+          $this->messenger->addMessage('Message has been successfully cancelled.');
         }
         elseif ($cancelStatus === 'SENT') {
-          $this->messenger->addWarning('Message has already been sent');
+          $this->messenger->addWarning('Message has already been sent.');
           $entity->set('moderation_state', 'sent');
           $entity->setNewRevision(TRUE);
           $entity->setRevisionLogMessage('Sent');
