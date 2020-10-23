@@ -203,7 +203,7 @@ class DashboardMessages {
       watchdog_exception('dx_messages', $exception);
     }
     if (isset($messageResponse) && $messageResponse->getStatusCode() === 200) {
-      return 'CANCELED';
+      return 'CANCELLED';
     }
     elseif (isset($messageResponse) && $messageResponse->getStatusCode() === 400) {
       return 'SENT';
