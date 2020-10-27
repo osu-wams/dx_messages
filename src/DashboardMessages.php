@@ -101,7 +101,17 @@ class DashboardMessages {
     $publishDayTime = $entity->get('field_message_publish_day')->getString();
     $isoDate = date('Y-m-d\TH:i:s.v\Z', strtotime($publishDayTime));
 
-    $messageAudience = $entity->get('field_message_audience')->getValue();
+    $messageAudience = [];
+    /** @var \Drupal\Core\Field\EntityReferenceFieldItemList $audience */
+    foreach ($entity->get('field_message_audience') as $audience) {
+      /** @var \Drupal\Core\Entity\Plugin\DataType\EntityAdapter $audience_adapter */
+      $audience_adapter = $audience->get('entity')->getTarget();
+      if (!is_null($audience_adapter)) {
+        $messageAudience[] = $audience_adapter->getValue()
+          ->get('field_message_audience_key')
+          ->getString();
+      }
+    }
 
     $mediaId = $entity->get('field_message_media')->getString();
     /** @var \Drupal\media\Entity\Media $media */
@@ -121,7 +131,7 @@ class DashboardMessages {
     $payload = [
       'payload' => [
         'populationParams' => [
-          'affiliations' => array_column($messageAudience, 'value'),
+          'affiliations' => $messageAudience,
         ],
         'channelIds' => ['dashboard'],
         'content' => $longBody,
