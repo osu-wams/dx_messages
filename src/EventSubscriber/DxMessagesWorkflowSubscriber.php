@@ -11,6 +11,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\dx_messages\DashboardMessages;
 use Drupal\dx_messages\QueuedDXMessages;
+use InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -119,7 +120,7 @@ class DxMessagesWorkflowSubscriber implements EventSubscriberInterface {
     try {
       $transition = $typePlugin->getTransitionFromStateToState($from, $to);
     }
-    catch (\InvalidArgumentException $e) {
+    catch (InvalidArgumentException $e) {
       // Do nothing in case of invalid transition.
       return;
     }
@@ -156,21 +157,30 @@ class DxMessagesWorkflowSubscriber implements EventSubscriberInterface {
         break;
 
       case 'cancelled':
-        $cancelStatus = $this->dashboardMessages->sendCancelMessage($messagePublishId);
-        if ($cancelStatus === 'CANCELLED') {
-          $this->messenger->addMessage('Message has been successfully cancelled.');
-        }
-        elseif ($cancelStatus === 'SENT') {
-          $this->messenger->addWarning('Message has already been sent.');
+        $currentMessageStatus = $this->dashboardMessages->getMessageStatus($messagePublishId);
+        if (isset($currentMessageStatus) && $currentMessageStatus === 'PROCESSING') {
+          $this->messenger->addWarning('Message is being processed, cannot Cancel.');
           $entity->set('moderation_state', 'sent');
           $entity->setNewRevision(TRUE);
           $entity->setRevisionLogMessage('Sent');
           $entity->save();
         }
         else {
-          $this->messenger->addError('Something went terribly wrong with your request. Please contact the site owners.');
+          $cancelStatus = $this->dashboardMessages->sendCancelMessage($messagePublishId);
+          if ($cancelStatus === 'CANCELLED') {
+            $this->messenger->addMessage('Message has been successfully cancelled.');
+          }
+          elseif ($cancelStatus === 'SENT') {
+            $this->messenger->addWarning('Message has already been sent.');
+            $entity->set('moderation_state', 'sent');
+            $entity->setNewRevision(TRUE);
+            $entity->setRevisionLogMessage('Sent');
+            $entity->save();
+          }
+          else {
+            $this->messenger->addError('Something went terribly wrong with your request. Please contact the site owners.');
+          }
         }
-
         break;
     }
 
