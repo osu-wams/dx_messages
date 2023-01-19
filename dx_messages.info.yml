@@ -2,8 +2,7 @@ name: DX Messages
 type: module
 description: DX Messages Integration
 package: DX
-core: 8.x
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^9 || ^10
 configure: dx_messages.settings_form
 dependencies:
   - drupal:workflows
