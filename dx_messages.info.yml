@@ -3,6 +3,7 @@ type: module
 description: DX Messages Integration
 package: DX
 core_version_requirement: ^9 || ^10
+version: '1.0.4'
 configure: dx_messages.settings_form
 dependencies:
   - drupal:workflows
