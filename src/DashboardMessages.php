@@ -44,18 +44,18 @@ class DashboardMessages {
   protected $entityTypeManager;
 
   /**
+   * The Translation interface.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationInterface
+   */
+  protected $stringTranslation;
+
+  /**
    * The Messenger interface.
    *
    * @var \Drupal\Core\Messenger\MessengerInterface
    */
   private $messenger;
-
-  /**
-   * The Translation interface.
-   *
-   * @var \Drupal\Core\StringTranslation\TranslationInterface
-   */
-  private $string_translation;
 
   /**
    * Constructs a DashboardMessages object.
@@ -76,7 +76,7 @@ class DashboardMessages {
     $this->configFactory = $config_factory;
     $this->entityTypeManager = $entity_type_manager;
     $this->messenger = $messenger;
-    $this->string_translation = $string_translation;
+    $this->stringTranslation = $string_translation;
   }
 
   /**
@@ -87,6 +87,10 @@ class DashboardMessages {
    *
    * @return string|bool
    *   The Message ID from the response or FALSE.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
   public function sendMessage(ContentEntityInterface $entity) {
     global $base_url;
@@ -96,7 +100,7 @@ class DashboardMessages {
     $title = $entity->get('title')->getString();
 
     $shortBody = $entity->get('field_message_short_body')->getString();
-    $longBody = $entity->get('field_message_body')->get(0)->value;
+    $longBody = $entity->get('field_message_body')->getValue()[0]['value'];
 
     $publishDayTime = $entity->get('field_message_publish_day')->getString();
     $isoDate = date('Y-m-d\TH:i:s.v\Z', strtotime($publishDayTime));
@@ -237,7 +241,6 @@ class DashboardMessages {
     $messageApiKey = $config->get('dx_api_key');
     $messageApiEndpoint = $config->get('dx_api_messages_endpoint');
     try {
-      /** @var \Psr\Http\Message\ResponseInterface $response */
       $response = $this->httpClient->get($messageApiEndpoint . '/' . $messageId, [
         'headers' => [
           'x-api-key' => $messageApiKey,

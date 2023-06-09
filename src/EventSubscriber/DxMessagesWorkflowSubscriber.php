@@ -11,7 +11,6 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\dx_messages\DashboardMessages;
 use Drupal\dx_messages\QueuedDXMessages;
-use InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -97,6 +96,10 @@ class DxMessagesWorkflowSubscriber implements EventSubscriberInterface {
    *
    * @param \Drupal\content_moderation\Event\ContentModerationStateChangedEvent|\Drupal\workbench_email\EventSubscriber\ContentModerationStateChangedEvent $event
    *   The event listened to.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function onContentModerationTransition($event) {
     /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
@@ -120,7 +123,7 @@ class DxMessagesWorkflowSubscriber implements EventSubscriberInterface {
     try {
       $transition = $typePlugin->getTransitionFromStateToState($from, $to);
     }
-    catch (InvalidArgumentException $e) {
+    catch (\InvalidArgumentException $e) {
       // Do nothing in case of invalid transition.
       return;
     }
@@ -161,7 +164,7 @@ class DxMessagesWorkflowSubscriber implements EventSubscriberInterface {
         if (isset($currentMessageStatus) && $currentMessageStatus === 'PROCESSING') {
           $this->messenger->addWarning('Message is being processed, cannot Cancel.');
           $entity->set('moderation_state', 'sent');
-          $entity->setNewRevision(TRUE);
+          $entity->setNewRevision();
           $entity->setRevisionLogMessage('Sent');
           $entity->save();
         }
@@ -173,7 +176,7 @@ class DxMessagesWorkflowSubscriber implements EventSubscriberInterface {
           elseif ($cancelStatus === 'SENT') {
             $this->messenger->addWarning('Message has already been sent.');
             $entity->set('moderation_state', 'sent');
-            $entity->setNewRevision(TRUE);
+            $entity->setNewRevision();
             $entity->setRevisionLogMessage('Sent');
             $entity->save();
           }
