@@ -32,6 +32,7 @@ function dx_messages_cron() {
   $moderation = Drupal::entityTypeManager()
     ->getStorage('content_moderation_state')
     ->getQuery()
+    ->accessCheck(FALSE)
     ->condition('workflow', 'message_publication')
     ->condition('moderation_state', 'published')
     ->execute();
@@ -47,6 +48,7 @@ function dx_messages_cron() {
     $nodes = Drupal::entityTypeManager()
       ->getStorage('node')
       ->getQuery()
+      ->accessCheck(FALSE)
       ->condition('type', 'messages')
       ->condition('status', 1)
       ->condition('nid', $moderation_node_ids, 'IN')
