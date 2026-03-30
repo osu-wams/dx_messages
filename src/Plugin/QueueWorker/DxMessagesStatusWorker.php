@@ -4,20 +4,22 @@ namespace Drupal\dx_messages\Plugin\QueueWorker;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Queue\Attribute\QueueWorker;
 use Drupal\Core\Queue\QueueWorkerBase;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\dx_messages\DashboardMessages;
 use Drupal\dx_messages\QueuedDXMessages;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines 'dx_messages' queue worker.
- *
- * @QueueWorker(
- *   id = "dx_messages",
- *   title = @Translation("DxMessagesQueue"),
- *   cron = {"time" = 60}
- * )
  */
+#[QueueWorker(
+  id: 'dx_messages',
+  title: new TranslatableMarkup('DxMessagesQueue'),
+  cron: ['time' => 60]
+)
+]
 class DxMessagesStatusWorker extends QueueWorkerBase implements ContainerFactoryPluginInterface {
 
   /**
