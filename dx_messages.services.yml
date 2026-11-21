@@ -1,10 +1,14 @@
 services:
-  dx_messages.dashboard_messages:
-    class: Drupal\dx_messages\DashboardMessages
-    arguments: [ '@http_client', '@config.factory', '@entity_type.manager', '@messenger', '@string_translation' ]
+  _defaults:
+    autowire: true
+    autoconfigure: true
 
-  dx_messages.event_subscriber:
-    class: Drupal\dx_messages\EventSubscriber\DxMessagesWorkflowSubscriber
-    arguments: [ '@entity_type.manager', '@config.factory', '@messenger', '@dx_messages.dashboard_messages', '@string_translation', '@queue' ]
+  logger.channel.dx_messages:
+    parent: logger.channel_base
+    arguments: ["dx_messages"]
+
+  Drupal\dx_messages\DashboardMessages: {}
+
+  Drupal\dx_messages\EventSubscriber\DxMessagesWorkflowSubscriber:
     tags:
       - { name: event_subscriber }

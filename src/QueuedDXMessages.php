@@ -1,25 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\dx_messages;
 
 /**
  * Creates an Object to be used in the Queue System.
  */
 class QueuedDXMessages {
-
-  /**
-   * The Message ID.
-   *
-   * @var string
-   */
-  private $messageId;
-
-  /**
-   * The Entity ID.
-   *
-   * @var int
-   */
-  private $entityId;
 
   /**
    * QueuedDXMessages constructor.
@@ -29,10 +17,19 @@ class QueuedDXMessages {
    * @param int $entityId
    *   The Entity ID of the node.
    */
-  public function __construct(string $messageId, int $entityId) {
+  public function __construct(
+    protected readonly string $messageId,
+    protected readonly int $entityId,
+  ) {}
 
-    $this->messageId = $messageId;
-    $this->entityId = $entityId;
+  /**
+   * Get the entity ID.
+   *
+   * @return int
+   *   The Entity ID.
+   */
+  public function getEntityId() {
+    return $this->entityId;
   }
 
   /**
@@ -43,16 +40,6 @@ class QueuedDXMessages {
    */
   public function getMessageId() {
     return $this->messageId;
-  }
-
-  /**
-   * Get the entity ID.
-   *
-   * @return int
-   *   The Entity ID.
-   */
-  public function getEntityId() {
-    return $this->entityId;
   }
 
 }

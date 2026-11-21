@@ -6,8 +6,12 @@
  *
  * @DCG
  * This file is no longer required in Drupal 8.
+ *
  * @see https://www.drupal.org/node/2217931
  */
+
+declare(strict_types=1);
+
 
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormStateInterface;
@@ -27,7 +31,7 @@ function dx_messages_form_alter(&$form, FormStateInterface $form_state, $form_id
  * Implements hook_cron().
  */
 function dx_messages_cron() {
-  $queue = \Drupal::queue('dx_messages');
+  $queue = Drupal::queue('dx_messages');
   $currentDateTime = new DrupalDateTime('now', 'UTC');
   $moderation = Drupal::entityTypeManager()
     ->getStorage('content_moderation_state')
@@ -41,9 +45,11 @@ function dx_messages_cron() {
     ->loadMultiple($moderation);
   /** @var \Drupal\content_moderation\Entity\ContentModerationState $moderation_entity */
   $moderation_node_ids = [];
+
   foreach ($moderation_ids as $moderation_entity) {
     $moderation_node_ids[] = (int) $moderation_entity->content_entity_id->getString();
   }
+
   if (!empty($moderation_node_ids)) {
     $nodes = Drupal::entityTypeManager()
       ->getStorage('node')
@@ -55,8 +61,9 @@ function dx_messages_cron() {
       ->condition('field_message_publish_day', $currentDateTime->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT), '<=')
       ->execute();
 
-    \Drupal::logger('dx_messages')->info(\Drupal::translation()
+    Drupal::logger('dx_messages')->info(Drupal::translation()
       ->translate('Adding @count items to the queue.', ['@count' => count($nodes)]));
+
     foreach ($nodes as $node) {
       /** @var \Drupal\node\Entity\Node $node_to_check */
       $node_to_check = Drupal::entityTypeManager()

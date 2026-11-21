@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\dx_messages\Plugin\QueueWorker;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -18,16 +20,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
   id: 'dx_messages',
   title: new TranslatableMarkup('DxMessagesQueue'),
   cron: ['time' => 60]
-)
-]
+)]
 class DxMessagesStatusWorker extends QueueWorkerBase implements ContainerFactoryPluginInterface {
-
-  /**
-   * Entity type Manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  private $entityTypeManager;
 
   /**
    * Messages Interface.
@@ -35,6 +29,13 @@ class DxMessagesStatusWorker extends QueueWorkerBase implements ContainerFactory
    * @var \Drupal\dx_messages\DashboardMessages
    */
   private $dashboardMessages;
+
+  /**
+   * Entity type Manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  private $entityTypeManager;
 
   /**
    * Constructs a Queue Worker.
@@ -75,7 +76,9 @@ class DxMessagesStatusWorker extends QueueWorkerBase implements ContainerFactory
   public function processItem($data) {
     if ($data instanceof QueuedDXMessages) {
       $message_status = $this->dashboardMessages->getMessageStatus($data->getMessageId());
+
       if ($message_status && $message_status === 'SENT') {
+        /** @var \Drupal\node\Entity\Node $node */
         $node = $this->entityTypeManager->getStorage('node')
           ->load($data->getEntityId());
         $node->set('moderation_state', 'sent');

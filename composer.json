@@ -1,20 +1,51 @@
 {
-  "name": "osu-wams/dx_messages",
-  "description": "Drupal Module to send messages off to the Dashboard MCM.",
-  "minimum-stability": "stable",
-  "license": "GPL-2.0-or-later",
-  "type": "drupal-custom-module",
-  "keywords": [
-    "Drupal"
-  ],
-  "authors": [
-    {
-      "name": "Matthew Brabham",
-      "email": "matthew.brabham@oregonstate.edu"
+    "name": "osu-wams/dx_messages",
+    "description": "Drupal Module to send messages off to the Dashboard MCM.",
+    "minimum-stability": "stable",
+    "license": "GPL-2.0-or-later",
+    "type": "drupal-custom-module",
+    "keywords": [
+        "Drupal"
+    ],
+    "authors": [
+        {
+            "name": "Matthew Brabham",
+            "email": "matthew.brabham@oregonstate.edu"
+        }
+    ],
+    "repositories": [
+        {
+            "name": "drupal",
+            "type": "composer",
+            "url": "https://packages.drupal.org/8",
+            "only": [
+                "drupal/*"
+            ]
+        }
+    ],
+    "scripts": {
+        "cs-checkstyle": "phpcs -q --report=checkstyle",
+        "phpcs": "phpcs",
+        "phpcbf": "phpcbf",
+        "twigcs": "twigcs"
+    },
+    "require": {
+        "drupal/core": "^10 || ^11",
+        "drupal/workbench_email": "^2.0 || ^3.0"
+    },
+    "require-dev": {
+        "drupal/coder": "^9.0",
+        "drupol/phpcsfixer-configs-drupal": "^2.2",
+        "friendsofphp/php-cs-fixer": "^3.95",
+        "squizlabs/php_codesniffer": "^4.0",
+        "vincentlanglet/twig-cs-fixer": "^4.1"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "drupal/core-composer-scaffold": false,
+            "symfony/runtime": false
+        }
     }
-  ],
-  "require": {
-    "drupal/core": "^9 || ^10",
-    "drupal/workbench_email": "^2.0 || ^3.0"
-  }
 }
